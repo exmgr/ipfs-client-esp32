@@ -1,5 +1,5 @@
 # IPFS Client ESP32 Arduino Library
-ESP32 library for submitting data to IPFS.
+ESP32 Arduino library for submitting data to IPFS.
 Requires ArduinJSON.
 
 ## Usage
