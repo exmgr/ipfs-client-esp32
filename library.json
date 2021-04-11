@@ -1,12 +1,12 @@
 {
     "name": "IPFSClientESP32",
-    "version": "0.1.0",
-    "description": "ESP32 library for submitting data to IPFS.",
+    "version": "0.1.1",
+    "description": "ESP32 library for interacting with IPFS.",
     "keywords": "ipfs",
     "repository":
     {
       "type": "git",
-      "url": "https://github.com/nikosexm/ipfs-client-esp32"
+      "url": "https://github.com/exmgr/ipfs-client-esp32"
     },
     "authors":
     [
