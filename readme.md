@@ -1,6 +1,11 @@
 # IPFS Client ESP32 Arduino Library
+<<<<<<< HEAD
 ESP32 library for interacting with IPFS.
 Requires ArduinoJSON.
+=======
+ESP32 Arduino library for submitting data to IPFS.
+Requires ArduinJSON.
+>>>>>>> 9aff12c8db563b64c7b6cba532124543d78cbc1c
 
 ## Usage
 
@@ -31,9 +36,13 @@ ipfs_client.add(&ipfs_file, "file.png", &f);
 // Resulting CID is in ipfs_file.hash
 ```
 
+<<<<<<< HEAD
 Read data back ('IPFS cat')
 ```c++
 result = ipfs_client.cat("[IPFS CID here]", output);
 ```
 
 Check /examples for more.
+=======
+Check /examples for more.
+>>>>>>> 9aff12c8db563b64c7b6cba532124543d78cbc1c
