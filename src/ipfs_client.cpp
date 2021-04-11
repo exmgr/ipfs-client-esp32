@@ -219,3 +219,54 @@ IPFSClient::Result IPFSClient::add_req(IPFSFile *file_out, String filename, Stri
 
 	return ret;
 }
+
+/******************************************************************************
+* Helper function to build paths to HTTP api functions
+* @param	path	Path to API function
+* @return	Result API path URL
+******************************************************************************/
+String IPFSClient::build_api_path(String path)
+{
+	return _node_addr + ":" + _node_port + API_PATH + path;
+}
+
+/******************************************************************************
+* Get contents of IPFS file
+* @param	file_out	Parsed IPFS response (output)
+* @param	filename	Filename to submit to IPFS (not related to SPIFFS filename)
+* @param	data		Data. Ignored if spiffs_file is set
+* @param	spiffs_file	Handle to an opened file in SPIFFS
+* @return	Result struct
+******************************************************************************/
+IPFSClient::Result IPFSClient::cat(String cid, String& output, int max_length)
+{
+	HTTPClient http_client;
+
+	// Build path and append required arguments
+	String path = "/cat?arg=" + cid;
+	if(max_length > 0)
+	{
+		path += "&length=" + String(max_length);
+	}
+
+	String full_path = build_api_path(path);
+
+	// Do req
+	if(http_client.begin(full_path) == false)
+	{
+		return IPFS_CLIENT_CANNOT_CONNECT;	
+	}
+
+	int response_code = http_client.POST("");
+
+	output = http_client.getString();
+
+	if (response_code == 200)
+	{
+		return IPFS_CLIENT_OK;
+	}
+	else
+	{
+		return IPFS_CLIENT_INVALID_RESPONSE;
+	}
+}

@@ -39,11 +39,15 @@ public:
 
     Result add(IPFSFile *file_out, String filename, String data);
     Result add(IPFSFile *file_out, String filename, File *spiffs_file);
+
+    Result cat(String cid, String& output, int max_length = 0);
 private:
     // Default constructor private
     IPFSClient(){};
 
     Result add_req(IPFSFile *file_out, String filename, String data, File *spiffs_file);
+
+    String build_api_path(String path);
 
     String _node_addr = "";
     uint16_t _node_port = 0;
