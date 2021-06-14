@@ -1,5 +1,4 @@
 #include "ipfs_client.h"
-#include <ArduinoJson.h>
 #include <HTTPClient.h>
 
 const char IPFSClient::API_PATH[] = "/api/v0";
@@ -292,6 +291,34 @@ IPFSClient::Result IPFSClient::files_mv(String from, String to)
 }
 
 /******************************************************************************
+ * Display file status
+ * Equivalent to HTTP /files/stat
+ * @param	path	File path
+ * @param	output_json_doc	Output JSON document containing the response
+ * @return	Result struct
+ ******************************************************************************/
+IPFSClient::Result IPFSClient::files_stat(String file_path, JsonDocument& output_json_doc)
+{
+	HTTPClient http_client;
+
+	// Build path and append required arguments
+	String path = "/files/stat?arg=" + file_path;
+
+	String full_path = build_api_path(path);
+
+	String response;
+
+	Result res = post(full_path, &response);
+
+	if(res == IPFSClient::IPFS_CLIENT_OK)
+	{
+		deserializeJson(output_json_doc, response);
+	}
+
+	return res;
+}
+
+/******************************************************************************
  * Parse response into the last response object 
  * @param	response	Response received from request
  ******************************************************************************/
@@ -311,10 +338,10 @@ void IPFSClient::parse_last_response(String response)
 	}
 }
 
-/**
+/******************************************************************************
  * Get response object returned from the last executed command
  * @return	Ptr to last response struct
- */
+ ******************************************************************************/
 const IPFSClient::IPFSResponse* IPFSClient::get_last_response()
 {
 	return &_last_response;

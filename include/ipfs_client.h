@@ -8,6 +8,7 @@
 #define IPFS_CLIENT_H
 
 #include <WiFiClient.h>
+#include <ArduinoJson.h>
 #include "SPIFFS.h"
 
 class IPFSClient
@@ -53,6 +54,7 @@ public:
     Result cat(String cid, String& output, int max_length = 0);
     Result files_cp(String from, String to);
     Result files_mv(String from, String to);
+    Result files_stat(String path, JsonDocument& output_json_doc);
 
     const IPFSResponse *get_last_response();
 private:
