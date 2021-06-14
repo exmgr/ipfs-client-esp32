@@ -40,7 +40,30 @@ ipfs_client.add(&ipfs_file, "file.png", &f);
 Read data from file.
 
 ```c++
-result = ipfs_client.cat("[IPFS CID here]", output);
+IPFSClient::Result = ipfs_client.cat("[IPFS CID here]", output);
 ```
 
 Check /examples for more.
+
+### IPFS 'cp' / 'mv/
+
+**cp** copy file from IPFS to the Mutable File System, or between MFS directories.
+**mv** move file between MFS directories.
+
+```c++
+IPFSClient::Result result = ipfs_client.files_mv("/path/to/source/file", "/path/to/destination");
+```
+
+### IPFS 'stat'
+Get file status
+
+```c++
+StaticJsonDocument<200> json;
+IPFSClient::Result res = ipfs_client.files_stat("/path/to/file", json);
+
+Serial.print(F("Hash: "));
+Serial.println(doc["Hash"].as<char*>());
+Serial.print(F("Size: "));
+Serial.println(doc["Size"].as<int>(), DEC);
+Serial.print(F("Type: "));
+Serial.println(doc["Type"].as<char*>());
