@@ -274,6 +274,24 @@ IPFSClient::Result IPFSClient::files_cp(String from, String to)
 }
 
 /******************************************************************************
+ * Move file in MFS
+ * Equivalent to HTTP /files/mv
+ * @param	from	Source path
+ * @param	to		Destination path
+ * @return	Result struct
+ ******************************************************************************/
+IPFSClient::Result IPFSClient::files_mv(String from, String to)
+{
+	HTTPClient http_client;
+
+	// Prepare path/params
+	String path = "/files/mv?arg=" + from + "&arg=" + to;
+	String full_path = build_api_path(path);
+
+	return post(full_path);
+}
+
+/******************************************************************************
  * Parse response into the last response object 
  * @param	response	Response received from request
  ******************************************************************************/

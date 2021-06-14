@@ -52,6 +52,7 @@ public:
     Result add(IPFSFile *file_out, String filename, File *spiffs_file);
     Result cat(String cid, String& output, int max_length = 0);
     Result files_cp(String from, String to);
+    Result files_mv(String from, String to);
 
     const IPFSResponse *get_last_response();
 private:
