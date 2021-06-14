@@ -91,6 +91,7 @@ IPFSClient::Result IPFSClient::add_req(IPFSFile *file_out, String filename, Stri
 		"User-Agent: EXM-IPFSClient/1.0\r\n"
 		"Content-Type: multipart/form-data; boundary=" +
 		boundary + "\r\n";
+
 	//
 	// Data part headers
 	//
@@ -251,19 +252,96 @@ IPFSClient::Result IPFSClient::cat(String cid, String& output, int max_length)
 
 	String full_path = build_api_path(path);
 
-	// Do req
-	if(http_client.begin(full_path) == false)
+	return post(full_path, &output);
+}
+
+/******************************************************************************
+ * Copy file from IPFS/MFS to MFS
+ * Equivalent to HTTP /files/cp
+ * @param	from	Source path
+ * @param	to		Destination path
+ * @return	Result struct
+ ******************************************************************************/
+IPFSClient::Result IPFSClient::files_cp(String from, String to)
+{
+	HTTPClient http_client;
+
+	// Prepare path/params
+	String path = "/files/cp?arg=" + from + "&arg=" + to;
+	String full_path = build_api_path(path);
+
+	return post(full_path);
+}
+
+/******************************************************************************
+ * Parse response into the last response object 
+ * @param	response	Response received from request
+ ******************************************************************************/
+void IPFSClient::parse_last_response(String response)
+{
+	StaticJsonDocument<255> json_doc;
+
+	if(deserializeJson(json_doc, response) == DeserializationError::Ok)
 	{
-		return IPFS_CLIENT_CANNOT_CONNECT;	
+		_last_response.code = json_doc["Code"].as<int>();
+		strncpy(_last_response.message, json_doc["Message"], sizeof(_last_response.message));
+		strncpy(_last_response.type, json_doc["Type"], sizeof(_last_response.type));
+	}
+	else
+	{
+		memset(&_last_response, 0, sizeof(_last_response));
+	}
+}
+
+/**
+ * Get response object returned from the last executed command
+ * @return	Ptr to last response struct
+ */
+const IPFSClient::IPFSResponse* IPFSClient::get_last_response()
+{
+	return &_last_response;
+}
+
+/******************************************************************************
+ * Helper function for submitting command requests.
+ * @param	Path to use along with querystring of params
+ * @return 	Result struct
+ ******************************************************************************/
+IPFSClient::Result IPFSClient::post(String path, String* output)
+{
+	HTTPClient http_client;
+
+	Serial.print(F("POST to: "));
+	Serial.println(path);
+
+	// Do req
+	if(http_client.begin(path) == false)
+	{
+		return IPFS_CLIENT_CANNOT_CONNECT;
 	}
 
 	int response_code = http_client.POST("");
 
-	output = http_client.getString();
+	String response = http_client.getString();
+
+	if(output != nullptr)
+		*output = response;
+
+	if(response_code != 200)
+		parse_last_response(response);
+
+	// Serial.print(F("Response code: "));
+	// Serial.println(response_code, DEC);
+	// Serial.print(F("Response"));
+	// Serial.println(response);
 
 	if (response_code == 200)
 	{
 		return IPFS_CLIENT_OK;
+	}
+	else if (response_code == 500)
+	{
+		return IPFS_CLIENT_ERROR;
 	}
 	else
 	{
